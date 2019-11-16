@@ -3,7 +3,7 @@ echo "*************************Welcome to TICTACTOE WORLD***********************
 declare -a boardOfTicTacToe
 PLAYER="X"
 COMPUTER="O"
-
+winCount=0;
 function resetTheBoard()
 {
  count=1;
@@ -28,8 +28,34 @@ function whoPlayFirst()
 }
 function play()
 {
- read -p "Enter the Position to Insert the "X" : " position
- boardOfTicTacToe["$position"]="X"
+ local turn=1;
+ while [ $winCount != 1 ]
+ do 
+   read -p "Enter the Position to Insert the "X" : " position
+   boardOfTicTacToe["$position"]="X"
+   displayBoard
+   winInRows
+ done
+  
+}
+function winInRows()
+{
+   for (( i=1; i<=9; i++ ))
+   do 
+     if [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+1"]} ]] && [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+2"]} ]]
+     then 
+         echo "you win "
+         winCount=1;
+     elif [[ ${boardOfTicTacToe["$i+2"]} == ${boardOfTicTacToe["$i+3"]} ]] && [[ ${boardOfTicTacToe["$i+2"]} == ${boardOfTicTacToe["$i+4"]} ]]
+     then 
+         echo "you win "
+         winCount=1;
+     elif [[ ${boardOfTicTacToe["$i+4"]} == ${boardOfTicTacToe["$i+5"]} ]] && [[ ${boardOfTicTacToe["$i+4"]} == ${boardOfTicTacToe["$i+6"]} ]]
+     then 
+         echo "you win "
+         winCount=1;
+     fi 
+   done
 }
 
 function displayBoard()
@@ -43,6 +69,5 @@ function displayBoard()
    echo "    |---|---|---|"
 
 }
-resetTheBoard
 whoPlayFirst
-displayBoard
+winInRows
