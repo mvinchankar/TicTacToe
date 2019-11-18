@@ -3,7 +3,8 @@ echo "*************************Welcome to TICTACTOE WORLD***********************
 declare -a boardOfTicTacToe
 PLAYER="X"
 COMPUTER="O"
-winCount=0;
+winCount1=0;
+winCount=false;
 function resetTheBoard()
 {
  count=1;
@@ -20,44 +21,70 @@ function whoPlayFirst()
  if [ $resultOfToss -eq 0 ]
  then 
      echo "Player play First....."
+     playerCount=1;
      resetTheBoard
      play 
  else
      echo "Computer play First..."
+     computerCount=0;
  fi
 }
 function play()
 {
- local turn=1;
- while [ $winCount != 1 ]
+ while [ $winCount == false ] 
  do 
    read -p "Enter the Position to Insert the "X" : " position
    boardOfTicTacToe["$position"]="X"
    displayBoard
-   winInRows
- done
-  
+   winInRows $winCount
+   winInColumns $winCount
+   winInDiagonals $winCount
+ done 
 }
 function winInRows()
 {
-   for (( i=1; i<=9; i++ ))
+   local count=1;
+   for (( i=1; i<=3; i++ ))
    do 
-     if [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+1"]} ]] && [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+2"]} ]]
+     if [[ $computerCount -eq 1 ]] || [[ $playerCount -eq 1 ]] 
      then 
-         echo "you win "
-         winCount=1;
-     elif [[ ${boardOfTicTacToe["$i+2"]} == ${boardOfTicTacToe["$i+3"]} ]] && [[ ${boardOfTicTacToe["$i+2"]} == ${boardOfTicTacToe["$i+4"]} ]]
-     then 
-         echo "you win "
-         winCount=1;
-     elif [[ ${boardOfTicTacToe["$i+4"]} == ${boardOfTicTacToe["$i+5"]} ]] && [[ ${boardOfTicTacToe["$i+4"]} == ${boardOfTicTacToe["$i+6"]} ]]
-     then 
-         echo "you win "
-         winCount=1;
+         if [[ ${boardOfTicTacToe[$count]} == ${boardOfTicTacToe[$count+1]} ]] && [[ ${boardOfTicTacToe[$count+1]} == ${boardOfTicTacToe[$count+2]} ]] && [[ ${boardOfTicTacToe[$count+2]} == $PLAYER ]]
+         then 
+             winCount=true;
+             echo You Win
+             break;
+         else
+            count=$((count+3))
+         fi
      fi 
    done
 }
-
+function winInColumns()
+{
+ for (( i=1; i<=3; i++ ))
+ do 
+   if [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+3"]} ]] && [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+6"]} ]] && [[ ${boardOfTicTacToe["$i"]} == $PLAYER ]]
+   then 
+       winCount=true
+       echo You Win 
+       break;
+   fi
+ done
+}
+function winInDiagonals()
+{
+ count=1;
+ 
+   if [[ ${boardOfTicTacToe["$count"]} == ${boardOfTicTacToe["$count+4"]} ]] && [[ ${boardOfTicTacToe["$count+4"]} == ${boardOfTicTacToe["$count+8"]} ]] && [[ ${boardOfTicTacToe["$count"]} == $PLAYER ]]
+   then 
+       winCount=true;
+       echo You Win
+   elif [[ ${boardOfTicTacToe["$count+2"]} == ${boardOfTicTacToe["$count+4"]} ]] && [[ ${boardOfTicTacToe["$count+2"]} == ${boardOfTicTacToe["$count+6"]} ]] && [[ ${boardOfTicTacToe["$count+6"]} == $PLAYER ]]
+   then 
+       winCount=true;
+       echo You Win
+   fi
+}      
 function displayBoard()
 {
    echo "    |---|---|---|"
@@ -70,4 +97,3 @@ function displayBoard()
 
 }
 whoPlayFirst
-winInRows
