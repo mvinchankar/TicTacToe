@@ -1,10 +1,13 @@
 #!/bin/bash 
 echo "*************************Welcome to TICTACTOE WORLD****************************"
 declare -a boardOfTicTacToe
-PLAYER="X"
-COMPUTER="O"
+player=0;
+computer=0;
 winCount1=0;
 winCount=false;
+switchPlayers=0;
+playerCount=0;
+computerCount=0;
 function resetTheBoard()
 {
  count=1;
@@ -15,30 +18,80 @@ function resetTheBoard()
  done
  displayBoard
 }
+function symbolAssignment()
+{
+ resetTheBoard
+ whoPlayFirst $resultOfToss
+ if [ $resultOfToss -eq 1 ]
+ then 
+     player=X;
+     computer=O;
+     checkWhoWins
+ else  
+     player=O;
+     computer=X;
+     checkWhoWins  
+ fi
+}    
 function whoPlayFirst()
 {
  resultOfToss=$((RANDOM%2))
- if [ $resultOfToss -eq 0 ]
+ if [ $resultOfToss -eq 0 ] 
  then 
      echo "Player play First....."
-     playerCount=1;
-     resetTheBoard
-     play 
  else
      echo "Computer play First..."
-     computerCount=0;
  fi
 }
+
 function play()
 {
- while [ $winCount == false ] 
+ if [ $resultOfToss -eq 1 ]
+ then 
+     read -p "Enter the Position Computer Show Your Skills: " position
+     if [[ position -le 9 ]] && [[ position -ne 0 ]]
+     then 
+          if  [[ ${boardOfTicTacToe["$position"]} -eq "$player" ]] || [[ ${boardOfTicTacToe["position"]} -eq "$computer" ]]
+          then
+              echo "Please Select Another Block....Already Occupied!!!!!!!!!!" 
+              play $resultOfToss
+          else
+              boardOfTicTacToe[$position]=$computer
+              displayBoard
+              resultOfToss=0;
+          fi
+     fi
+ else
+    read -p "Enter the Position Player Show Your Skills: " position
+    if [[ position -le 9 ]] && [[ position -ne 0 ]]
+    then 
+        if  [[ ${boardOfTicTacToe["$position"]} -eq "$player" ]] || [[ ${boardOfTicTacToe["position"]} -eq "$computer" ]]
+        then
+            echo "Please Select Another Block....Already Occupied!!!!!!!!!!" 
+            play $resultOfToss
+        else
+            boardOfTicTacToe[$position]=$player
+            displayBoard
+            resultOfToss=1;
+        fi 
+    fi
+ fi
+}
+function checkWhoWins()
+{
+ local count=0; 
+ while [[ $( winInRows $winCount ) == false ]] || [[ $( winInColumns $winCount ) == false ]] || [[ $( winInDiagonals $winCount ) == false ]] 
  do 
-   read -p "Enter the Position to Insert the "X" : " position
-   boardOfTicTacToe["$position"]="X"
-   displayBoard
-   winInRows $winCount
-   winInColumns $winCount
+   count=$(($count + 1 ))
+   play 
+   winInRows $winCount 
+   winInColumns $winCount 
    winInDiagonals $winCount
+   if [ $count -ge 9 ]
+   then 
+       echo Match Tie
+       break
+   fi 
  done 
 }
 function winInRows()
@@ -46,45 +99,88 @@ function winInRows()
    local count=1;
    for (( i=1; i<=3; i++ ))
    do 
-     if [[ $computerCount -eq 1 ]] || [[ $playerCount -eq 1 ]] 
+     if [ $resultOfToss -eq 1 ]
      then 
-         if [[ ${boardOfTicTacToe[$count]} == ${boardOfTicTacToe[$count+1]} ]] && [[ ${boardOfTicTacToe[$count+1]} == ${boardOfTicTacToe[$count+2]} ]] && [[ ${boardOfTicTacToe[$count+2]} == $PLAYER ]]
+         if [ "${boardOfTicTacToe[$(($count))]}" = "${boardOfTicTacToe[$(($count+1))]}" ] && [ "${boardOfTicTacToe[$(($count+1))]}" = "${boardOfTicTacToe[$(($count+2))]}" ] && [ "${boardOfTicTacToe[$(($count))]}" = "$player" ]
          then 
-             winCount=true;
-             echo You Win
-             break;
+             winCount=true
+             echo Player Win
+             break 
          else
             count=$((count+3))
          fi
-     fi 
+     else 
+        if  [ "${boardOfTicTacToe[$(($count))]}" = "${boardOfTicTacToe[$(($count+1))]}" ] && [ "${boardOfTicTacToe[$(($count))]}" = "${boardOfTicTacToe[$(($count+2))]}" ] && [ "${boardOfTicTacToe[$(($count))]}" = "$computer" ]
+        then 
+            winCount=true;
+            echo Computer You Win
+            break
+        else
+            count=$((count+3))
+        fi
+
+     fi
    done
+ echo $winCount
 }
 function winInColumns()
 {
  for (( i=1; i<=3; i++ ))
  do 
-   if [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+3"]} ]] && [[ ${boardOfTicTacToe["$i"]} == ${boardOfTicTacToe["$i+6"]} ]] && [[ ${boardOfTicTacToe["$i"]} == $PLAYER ]]
+   if [ $resultOfToss -eq 1 ]
    then 
-       winCount=true
-       echo You Win 
-       break;
+       if [ "${boardOfTicTacToe[$((i))]}" = "${boardOfTicTacToe[$(($i+3))]}" ] && [ "${boardOfTicTacToe[$(($i))]}" = "${boardOfTicTacToe[$(($i+6))]}" ] && [ "${boardOfTicTacToe[$(($i+3))]}" = "$player" ]
+       then 
+           winCount=true
+           echo Player You Win 
+           break
+       fi
+   else
+       if [ "${boardOfTicTacToe[$i]}" = "${boardOfTicTacToe[$(($i+3))]}" ] && [ "${boardOfTicTacToe[$i]}" = "${boardOfTicTacToe[$(($i+6))]}" ] && [ "${boardOfTicTacToe[$(($i+3))]}" = "$computer" ]
+       then 
+           winCount=true
+           echo Computer You Win
+           break
+       fi
+
    fi
  done
+ echo $winCount
 }
 function winInDiagonals()
 {
- count=1;
- 
-   if [[ ${boardOfTicTacToe["$count"]} == ${boardOfTicTacToe["$count+4"]} ]] && [[ ${boardOfTicTacToe["$count+4"]} == ${boardOfTicTacToe["$count+8"]} ]] && [[ ${boardOfTicTacToe["$count"]} == $PLAYER ]]
-   then 
-       winCount=true;
-       echo You Win
-   elif [[ ${boardOfTicTacToe["$count+2"]} == ${boardOfTicTacToe["$count+4"]} ]] && [[ ${boardOfTicTacToe["$count+2"]} == ${boardOfTicTacToe["$count+6"]} ]] && [[ ${boardOfTicTacToe["$count+6"]} == $PLAYER ]]
-   then 
-       winCount=true;
-       echo You Win
+   local count=1;
+   for (( i=1; i<=3; i++ ))
+   do 
+     if [ $resultOfToss -eq 1 ]
+     then   
+         if [ "${boardOfTicTacToe[$count]}" = "${boardOfTicTacToe[$(($count+4))]}" ] && [ "${boardOfTicTacToe[$(($count+4))]}" = "${boardOfTicTacToe[$((count+8))]}" ] && [ "${boardOfTicTacToe[$(($count+8))]}" = "$player" ] 
+         then 
+           winCount=true
+           echo Player You Win
+           break; 
+         elif [ "${boardOfTicTacToe[$(($count+2))]}" = "${boardOfTicTacToe[$(($count+4))]}" ] && [ "${boardOfTicTacToe[$(($count+2))]}" = "${boardOfTicTacToe[$(($count+6))]}" ] && [ "${boardOfTicTacToe[$(($count+6))]}" = "$player" ] 
+         then
+             winCount=true
+             echo Player You Win
+             break;
+         fi
+    else   
+        if [ "${boardOfTicTacToe[$count]}" = "${boardOfTicTacToe[$(($count+4))]}" ] && [ "${boardOfTicTacToe[$(($count+4))]}" = "${boardOfTicTacToe[$(($count+8))]}" ] && [ "$boardOfTicTacToe[$(($count+8))]" = "$computer" ] 
+        then 
+            winCount=true
+            echo Computer You Win
+            break  
+        elif [ "${boardOfTicTacToe[$(($count+2))]}" = "${boardOfTicTacToe[$(($count+4))]}" ] && [ "${boardOfTicTacToe[$(($count+2))]}" = "${boardOfTicTacToe[$(($count+6))]}" ] && [ "${boardOfTicTacToe[$(($count+6))]}" = "$computer" ]
+        then 
+            winCount=true
+            echo Computer You Win
+            break
+       fi 
    fi
-}      
+ done
+ echo $winCount
+} 
 function displayBoard()
 {
    echo "    |---|---|---|"
@@ -96,4 +192,4 @@ function displayBoard()
    echo "    |---|---|---|"
 
 }
-whoPlayFirst
+symbolAssignment
