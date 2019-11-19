@@ -86,6 +86,7 @@ function computer()
 	winBlockPlayMove $computer
 	winBlockPlayMove $player
 	checkInCorners
+        checkForMiddles 
 	if [ $computerWinMove = false ]
 	then
 
@@ -271,6 +272,22 @@ function play()
 
  done
 }
+function checkForMiddles()
+{
+	if [ $computerWinMove = false ]
+   then
+            if [ ${boardOfTicTacToe[$counter]} == '-' ]
+            then
+               computerPosition=$(($counter+4))
+               boardOfTicTacToe[$computerPosition]=$computer
+               computerWinMove=true
+            break
+            fi
+      
+   fi
+
+}
+
 function displayBoard()
 {
    echo "    |---|---|---|"
