@@ -132,7 +132,7 @@ function checkWinningMove()
 		done
 	fi
 }
-function checkCorners
+function checkInCorners
 {
 	 if [ $computerWinMove = false ]
    then
