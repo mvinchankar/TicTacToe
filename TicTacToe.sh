@@ -39,12 +39,12 @@ function symbolAssignment()
 		whoPlays=true
 		player='X'
 		computer='O'
-		echo "Player symobol : X | Computer symbol : O"
+		echo "Player symbol : X | Computer symbol : O"
 		echo "Player plays First"
 	else
 		player='O'
 		computer='X'
-		echo "Player symobol : O | Computer symbol : X"
+		echo "Player symbol : O | Computer symbol : X"
 		echo "Computer Plays First"
 	fi
 }
@@ -237,55 +237,62 @@ function checkWon()
 
 function play()
 {
- while [ $won == false ]
- do
-	displayBoard
-	if [ $whoPlays == true ]
-	then
-		playerMove
-		checkWon $player
-		checkIfGameTie
-	else
-		computerMove
-		checkWon $computer
-		checkIfGameTie
-	fi
+	while [ $won == false ]
+	do
+		displayBoard
+		if [ $whoPlays == true ]
+		then
+			playerMove
+			checkWon $player
+			checkIfGameTie
+		else
+			computerMove
+			checkWon $computer
+			checkIfGameTie
+		fi
 
- done
+done
 }
 function checkForSides()
 {
-  if [ $computerWinMove = false ]
-   then
-      for (( counter=2; counter<=$(($MAX_POSITION-1)); counter=$(($counter+2)) ))
-      do
-         if [[ ${boardOfTicTacToe[$counter]} == '-' ]]
-         then
-             computerPosition=$counter
-             boardOfTicTacToe[$computerPosition]=$computer
-             computerWinMove=true
-             break
-         fi
-         if [[ $counter -eq $(($MAX_POSITION-1)) ]] && [[ $computerWinMove = false ]] && [[ ${boardOfTicTacToe[$counter]} == '-' ]]
-         then
-	      computerPosition=$counter
-              boardOfTicTacToe[$computerPosition]=$computer
-              computerWinMove=true
-	 fi
-      done
-  fi
+	if [ $computerWinMove = false ]
+	then
+		for (( counter=2; counter<=$(($MAX_POSITION-1)); counter=$(($counter+2)) ))
+		do
+			if [[ ${boardOfTicTacToe[$counter]} == '-' ]]
+			then
+		  		computerPosition=$counter
+        			boardOfTicTacToe[$computerPosition]=$computer
+        			computerWinMove=true
+        			break
+ 			fi
+ 			if [[ $counter -eq $(($MAX_POSITION-1)) ]] && [[ $computerWinMove = false ]] && [[ ${boardOfTicTacToe[$counter]} == '-' ]]
+ 			then
+      				computerPosition=$counter
+      				boardOfTicTacToe[$computerPosition]=$computer
+      				computerWinMove=true
+ 			fi
+		done
+	fi
 
 }
 
 function displayBoard()
 {
-   echo "    |---|---|---|"
-   echo "    | "${boardOfTicTacToe[1]}" | "${boardOfTicTacToe[2]}" | "${boardOfTicTacToe[3]}" |"
-   echo "    |---|---|---|"
-   echo "    | "${boardOfTicTacToe[4]}" | "${boardOfTicTacToe[5]}" | "${boardOfTicTacToe[6]}" |"
-   echo "    |---|---|---|"
-   echo "    | "${boardOfTicTacToe[7]}" | "${boardOfTicTacToe[8]}" | "${boardOfTicTacToe[9]}" |"
-   echo "    |---|---|---|"
+	clear
+	echo "    				|-----|-----|-----|"
+        echo "                                |     |     |     |"	 
+	echo "    				|  "${boardOfTicTacToe[1]}"  |  "${boardOfTicTacToe[2]}"  |  "${boardOfTicTacToe[3]}"  |"
+        echo "                                |     |     |     |"	 
+	echo "    				|-----|-----|-----|"
+	echo "                                |     |     |     |"		
+	echo "    				|  "${boardOfTicTacToe[4]}"  |  "${boardOfTicTacToe[5]}"  |  "${boardOfTicTacToe[6]}"  |"
+        echo "                                |     |     |     |"	 	
+	echo "    				|-----|-----|-----|"
+        echo "                                |     |     |     |"	 	
+	echo "    				|  "${boardOfTicTacToe[7]}"  |  "${boardOfTicTacToe[8]}"  |  "${boardOfTicTacToe[9]}"  |"
+        echo "                                |     |     |     |"	 	
+	echo "    				|-----|-----|-----|"
 
 }
 #-------------------------Main-------------------------------				
