@@ -14,6 +14,7 @@ won=false
 whoPlays=false
 computerWinMove=false
 computerblockedMove=false
+boardSize=3
 
 declare -a boardOfTicTacToe
 
@@ -108,7 +109,7 @@ function checkWinningMove()
 	symbol=$3
 	if [ $computerWinMove = false ]
 	then
-		for (( i=1; i<=3; i++ ))
+		for (( i=1; i<=$boardSize; i++ ))
 		do
 			if [[ ${boardOfTicTacToe[$counter]} == ${boardOfTicTacToe[$counter+$1+$1]} ]] && [[ ${boardOfTicTacToe[$counter+$1]} == '-' ]] && [[ ${boardOfTicTacToe[$counter]} == $symbol ]]
 			then
@@ -147,7 +148,7 @@ function checkingEmptyCorners
             			computerWinMove=true
            			break
 			fi
-			if [ $counter -eq 3 ]
+			if [ $counter -eq $boardSize ]
 			then
 				counter=$(($counter+2))
 				fi
@@ -161,7 +162,7 @@ function winInRowsAndColumns()
 {
 	position=1
 	temp=1
-	while [  $temp -le 3 ]
+	while [  $temp -le $boardSize ]
 	do
 		if [[ ${boardOfTicTacToe[$position]} == ${boardOfTicTacToe[$position+$3]} ]] && [[  ${boardOfTicTacToe[$position+$3]}  ==  ${boardOfTicTacToe[$position+$3+$3]} ]] && [[ ${boardOfTicTacToe[$position+$3+$3]} == $1 ]]
 		then
